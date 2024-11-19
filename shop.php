@@ -1,4 +1,5 @@
 <?php
+header('content-type: application/json');
 // Carregar os dados dos itens
 $data = json_decode(file_get_contents("items.json"), true);
 
