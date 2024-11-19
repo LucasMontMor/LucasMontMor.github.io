@@ -1,37 +1,36 @@
 <?php
-header('content-type: application/json');
-// Carregar os dados dos itens
-$data = json_decode(file_get_contents("items.json"), true);
+header('Content-Type: application/json'); // Garantir que a resposta seja JSON
 
-// Obter parâmetros da URL
+$data = json_decode(file_get_contents("items.json"), true);
 $itemCode = $_GET['itemCode'] ?? null;
 $playerCoins = $_GET['coins'] ?? null;
 
 if (!$itemCode || !$playerCoins) {
-    echo json_encode(["error" => "Parâmetros inválidos"]);
+    echo json_encode(["success" => false, "message" => "Parâmetros inválidos", "item" => null, "remainingCoins" => 0]);
     exit;
 }
 
-// Verificar se o item existe
 if (!isset($data['items'][$itemCode])) {
-    echo json_encode(["error" => "Item não encontrado"]);
+    echo json_encode(["success" => false, "message" => "Item não encontrado", "item" => null, "remainingCoins" => $playerCoins]);
     exit;
 }
 
 $item = $data['items'][$itemCode];
 $price = $item['price'];
 
-// Verificar moedas do jogador
 if ($playerCoins >= $price) {
     echo json_encode([
         "success" => true,
+        "message" => "Compra realizada com sucesso",
         "item" => $item,
         "remainingCoins" => $playerCoins - $price
     ]);
 } else {
     echo json_encode([
         "success" => false,
-        "message" => "Moedas insuficientes"
+        "message" => "Moedas insuficientes",
+        "item" => null,
+        "remainingCoins" => $playerCoins
     ]);
 }
 ?>
